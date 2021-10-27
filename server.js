@@ -6,6 +6,9 @@ const express = require('express');
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+//middleware to allow for the browser to get any necessary files saved in the public folder
+//in this case all the frontend files are here so the css and js can now display in the browser file
+app.use(express.static('public'));
 //parse incoming string or array data
 app.use(express.urlencoded({ extended:true }));
 //pasre incoming JSON data
@@ -127,6 +130,30 @@ app.post('/api/animals', (req, res) => {
         const animal = createNewAnimal(req.body, animals);
         res.json(animal);
     }
+});
+
+// the / represents the root route of the server. This route creates a homepage for the server
+// this get request only has one job to do and thats to respond with the html page to display in the browser
+app.get('/', (req, res) => {
+    // this send the file to display
+    //then we tell it where to find the html file we want to send back to the client
+    // we use the path module to ensure w find the correct location for the HTML code we want to display
+    res.sendFile(path.join(__dirname, './public/index.html'));
+});
+
+// allows us to navigate to the animal directory tab in the browser on the index.html page
+app.get('/animals', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/animals.html'));
+});
+
+app.get('/zookeepers', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/zookeepers.html'));
+});
+
+//the * acts as a wildcard meaning any route that wasn't previously defined will fall under this request
+//and receive the homepage as the response
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, './public/index.html'));
 });
 
 app.listen(PORT, () => {
