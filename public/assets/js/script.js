@@ -30,7 +30,7 @@ const handleAnimalFormSubmit = event => {
   // the fetch urn is simply /api/animals because the request is coming from the server,
   //we don't have to specifty the full URL.
   //similar to how we incorporate local files script and link 
-  fetch('/api/animals', {
+  fetch('api/animals', {
     //specify what type of fetch request we want to make. in this case we want to POST
     method: 'POST',
     // the header is set to inform that the request is going to be JSON data
@@ -40,16 +40,47 @@ const handleAnimalFormSubmit = event => {
     },
     body: JSON.stringify(animalObject)
   })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    }
+    alert('Error: ' + response.statusText);
+  })
+  .then(postResponse => {
+    console.log(postResponse);
+    alert('Thank you for adding an animal!');
+  });
+};
+
+const handleZookeeperFormSubmit = event => {
+  event.preventDefault();
+
+  // get zookeeper data and organize it
+  const name = $zookeeperForm.querySelector('[name="zookeeper-name"]').value;
+  const age = parseInt($zookeeperForm.querySelector('[name="age"]').value);
+  const favoriteAnimal = $zookeeperForm.querySelector('[name="favorite-animal"]').value;
+
+  const zookeeperObj = { name, age, favoriteAnimal };
+  console.log(zookeeperObj);
+  fetch('api/zookeepers', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(zookeeperObj)
+  })
     .then(response => {
       if (response.ok) {
         return response.json();
       }
-      alert(`Error: ${response.statusText}`);
+      alert('Error: ' + response.statusText);
     })
     .then(postResponse => {
       console.log(postResponse);
-      alert('Thank you for adding an animal!');
+      alert('Thank you for adding a zookeeper!');
     });
 };
 
 $animalForm.addEventListener('submit', handleAnimalFormSubmit);
+$zookeeperForm.addEventListener('submit', handleZookeeperFormSubmit);
